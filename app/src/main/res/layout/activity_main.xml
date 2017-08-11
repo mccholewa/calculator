@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:theme="@android:style/Theme.NoTitleBar"
+    tools:context="com.calculator.calculator.Activity.MainActivity">
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guidelineFirst"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.15"
+        tools:layout_editor_absoluteY="44dp"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guidelineSecond"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.4"
+        tools:layout_editor_absoluteY="118dp"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:id="@+id/equation"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineFirst" />
+    <TextView
+        android:id="@+id/result"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineSecond"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guidelineFirst" />
+
+    <GridLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#6B6B6B"
+        android:rowCount="4"
+        android:columnCount="5"
+        android:alignmentMode="alignMargins"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guidelineSecond"
+        >
+
+        <Button
+            android:id="@+id/seven"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:background="@drawable/keypadshape"
+            android:text="7"
+            android:textColor="#000000"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+
+        <Button
+            android:id="@+id/eight"
+            android:layout_column="1"
+            android:layout_gravity="fill"
+            android:layout_row="0"
+            android:background="@drawable/keypadshape"
+            android:text="8"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/nine"
+            android:layout_column="2"
+            android:layout_row="0"
+            android:background="@drawable/keypadshape"
+            android:text="9"
+            android:textColor="#000000"
+            android:layout_width="wrap_content" />
+
+        <Button
+            android:id="@+id/del"
+            android:layout_column="3"
+            android:layout_row="0"
+            android:background="@drawable/keypadshape"
+            android:text="DEL"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/c"
+            android:layout_column="4"
+            android:layout_row="0"
+            android:background="@drawable/keypadshape"
+            android:text="C"
+            android:textColor="#000000"
+            android:layout_width="wrap_content" />
+
+        <Button
+            android:id="@+id/four"
+            android:layout_column="0"
+            android:layout_row="1"
+            android:background="@drawable/keypadshape"
+            android:text="4"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/five"
+            android:layout_column="1"
+            android:layout_row="1"
+            android:background="@drawable/keypadshape"
+            android:text="5"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/six"
+            android:layout_column="2"
+            android:layout_row="1"
+            android:background="@drawable/keypadshape"
+            android:text="6"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/plus"
+            android:layout_column="3"
+            android:layout_row="1"
+            android:background="@drawable/keypadshape"
+            android:text="+"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/min"
+            android:layout_column="4"
+            android:layout_row="1"
+            android:background="@drawable/keypadshape"
+            android:text="6"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/one"
+            android:layout_column="0"
+            android:layout_row="2"
+            android:background="@drawable/keypadshape"
+            android:text="1"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/two"
+            android:layout_column="1"
+            android:layout_row="2"
+            android:background="@drawable/keypadshape"
+            android:text="2"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/three"
+            android:layout_column="2"
+            android:layout_row="2"
+            android:background="@drawable/keypadshape"
+            android:text="3"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/mul"
+            android:layout_column="3"
+            android:layout_row="2"
+            android:background="@drawable/keypadshape"
+            android:text="X"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/div"
+            android:layout_column="4"
+            android:layout_row="2"
+            android:background="@drawable/keypadshape"
+            android:text="/"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/dot"
+            android:layout_column="0"
+            android:layout_row="3"
+            android:background="@drawable/keypadshape"
+            android:text="."
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/zero"
+            android:layout_column="1"
+            android:layout_row="3"
+            android:background="@drawable/keypadshape"
+            android:text="0"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/openbracket"
+            android:layout_column="2"
+            android:layout_row="3"
+            android:background="@drawable/keypadshape"
+            android:text="("
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/closebracket"
+            android:layout_column="3"
+            android:layout_row="3"
+            android:background="@drawable/keypadshape"
+            android:text=")"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/equal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="5"
+            android:layout_row="3"
+            android:background="@drawable/keypadshape"
+            android:text="="
+            android:textColor="#000000" />
+    </GridLayout>
+
+    <!--<GridView-->
+        <!--android:id="@+id/gridView"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:numColumns="5"-->
+        <!--android:rowCount="5"-->
+        <!--android:scrollbars="none"-->
+        <!--android:stretchMode="columnWidth"-->
+        <!--android:horizontalSpacing="1dp"-->
+        <!--android:verticalSpacing="1dp"-->
+        <!--android:background="#6B6B6B"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="@+id/guidelineSecond"-->
+        <!--&gt;-->
+        <!--</GridView>-->
+</android.support.constraint.ConstraintLayout>
