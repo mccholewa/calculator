@@ -7,10 +7,6 @@
         android:bottomLeftRadius="0dp"
         android:bottomRightRadius="0dp"
         />
-    <size
-        android:height="40dp"
-        android:width="80dp"
-        />
     <solid
         android:color="#FFFFFF"
         />
