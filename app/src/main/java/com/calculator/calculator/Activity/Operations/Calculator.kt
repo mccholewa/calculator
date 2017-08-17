@@ -7,7 +7,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class Calculator{
-    var history: String = ""
-    var equation: String = ""
+    var mHistory: String = ""
+    var mEquation: String = ""
+    var mSelectonMoved = false
 
+    fun reset(){
+        mSelectonMoved = false
+    }
 }

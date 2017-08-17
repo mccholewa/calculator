@@ -1,63 +1,69 @@
 package com.calculator.calculator.Activity
 
+import android.databinding.DataBindingUtil
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.view.View
-import android.widget.TextView
 import com.calculator.calculator.R
-import butterknife.BindView
-import butterknife.OnClick
-import butterknife.ButterKnife
 import kotlinx.android.synthetic.main.activity_main.*
 import com.calculator.calculator.Activity.Operations.Calculator
-import kotlinx.android.synthetic.main.activity_main.view.*
-import android.R.id.button1
-
-
-
+import android.text.SpannableStringBuilder
+import android.view.WindowManager
 
 class MainActivity : AppCompatActivity() {
     private val calc: Calculator = Calculator()
+    //val binding : ActivityMainBinding = DataBindingUtil.setContentView(this,R.layout.activity_main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        ButterKnife.bind(this)
+        setOnClickListener()
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
+                WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+        equation.setSelection(0)
     }
-
-
-    @OnClick(R.id.one)
-    fun keypadClick(view:View){
-        keypadClickCase(view.id)
+    fun setOnClickListener(){
+        zero.setOnClickListener { addChar('0') }
+        one.setOnClickListener { addChar('1') }
+        two.setOnClickListener { addChar('2') }
+        three.setOnClickListener {addChar('3') }
+        four.setOnClickListener {  addChar( '4') }
+        five.setOnClickListener {  addChar('5') }
+        six.setOnClickListener {addChar('6') }
+        seven.setOnClickListener {addChar('7') }
+        eight.setOnClickListener { addChar('8') }
+        nine.setOnClickListener { addChar('9') }
+        plus.setOnClickListener { addChar('+') }
+        minus.setOnClickListener {addChar('-') }
+        divide.setOnClickListener { addChar('÷') }
+        multiply.setOnClickListener { addChar('x') }
+        openbracket.setOnClickListener {  addChar('(') }
+        closebracket.setOnClickListener { addChar(')') }
+        dot.setOnClickListener {  addChar('.') }
+        del.setOnClickListener { delete() }
+        c.setOnClickListener { deleteAll() }
+        equal.setOnClickListener { }
     }
-
-    //fun keypadClicked(id: Int){keypadClickCase(id)}
-
-    @OnClick(R.id.four)
-
-
-    fun keypadClickCase(id:Int)
-    {
-//        when(id){
-//            one.id -> equation.text =  addChar(equation,'1')
-//            two.id -> equation.text =  addChar(equation,'2')
-//            three.id -> equation.text =  addChar(equation,'3')
-//        }
+    fun addChar(charToAdd:Char){
+        var firstHalf = equation.text.toString().substring(0,equation.selectionEnd)
+        var secondHalf =  equation.text.toString().substring(equation.selectionEnd)
+        var newText = SpannableStringBuilder(firstHalf + charToAdd + secondHalf)
+        var privCursorPosition = equation.selectionEnd
+        equation.text =newText
+        if(equation.text.isNotEmpty())
+            equation.setSelection(privCursorPosition-1)
+        else equation.setSelection(privCursorPosition)
     }
-
-
-    fun addChar(textView:TextView,charToAdd:Char):String
-    {
-        var newText = textView.text.toString()
-        newText += charToAdd
-        return newText
+    fun delete() {
+        if(equation.text.isNotEmpty() && equation.selectionEnd!=0) {
+            var newText = equation.text.removeRange(equation.selectionEnd-1, equation.selectionEnd).toString()
+            var privCursorPosition = equation.selectionEnd
+            equation.text = SpannableStringBuilder(newText)
+            equation.setSelection(privCursorPosition-1)
+        }
+    }
+    fun deleteAll(){
+        equation.text = SpannableStringBuilder("")
     }
 }
-
-
-
-
-
 
 
 class Btn(setLabel:String,setAction: Action ){
