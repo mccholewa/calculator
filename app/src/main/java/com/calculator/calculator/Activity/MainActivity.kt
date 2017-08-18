@@ -1,16 +1,17 @@
 package com.calculator.calculator.Activity
 
-import android.databinding.DataBindingUtil
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.calculator.calculator.R
 import kotlinx.android.synthetic.main.activity_main.*
-import com.calculator.calculator.Activity.Operations.Calculator
 import android.text.SpannableStringBuilder
+import android.view.View
 import android.view.WindowManager
+import android.view.LayoutInflater
+import android.view.ViewGroup
 
 class MainActivity : AppCompatActivity() {
-    private val calc: Calculator = Calculator()
+    private val viewModel = MainViewModel()
     //val binding : ActivityMainBinding = DataBindingUtil.setContentView(this,R.layout.activity_main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,7 +19,12 @@ class MainActivity : AppCompatActivity() {
         setOnClickListener()
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
                 WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-        equation.setSelection(0)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        binding =  .inflate(inflater, container, false)
+        return binding.root
     }
     fun setOnClickListener(){
         zero.setOnClickListener { addChar('0') }
@@ -49,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         var privCursorPosition = equation.selectionEnd
         equation.text =newText
         if(equation.text.isNotEmpty())
-            equation.setSelection(privCursorPosition-1)
+            equation.setSelection(privCursorPosition)
         else equation.setSelection(privCursorPosition)
     }
     fun delete() {
