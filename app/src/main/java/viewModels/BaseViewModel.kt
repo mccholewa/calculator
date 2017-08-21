@@ -17,8 +17,9 @@ class BaseViewModel : ViewModel(){
     fun load(){
         data.mEquation = SpannableStringBuilder("3462346")
         data.mHistory = "3462346"
-        state.copy(data)
+        state.copy(data.mHistory,data.mEquation)
     }
+    override fun onCleared() {}
 
 
 
