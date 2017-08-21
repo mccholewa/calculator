@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:grid="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:theme="@android:style/Theme.NoTitleBar"
-    tools:context="com.calculator.calculator.Activity.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
             name="viewModel"
-            type="com.calculator.calculator.Activity.MainViewModel"
+            type="com.calculator.calculator.activity.MainViewModel"/>
     </data>
+<android.support.constraint.ConstraintLayout
+          android:id="@+id/layout"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:orientation="horizontal"
+          tools:context=".MainActivity">
     <android.support.constraint.Guideline
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,6 +46,7 @@
         android:layout_width="0dp"
         android:gravity="center_vertical|right"
         android:textSize="40sp"
+        android:text="@{viewModel.equation}"
         app:layout_constraintBottom_toTopOf="@+id/guidelineSecond"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -264,3 +265,4 @@
             android:textColor="#000000" />
     </android.support.v7.widget.GridLayout>
 </android.support.constraint.ConstraintLayout>
+</layout>
