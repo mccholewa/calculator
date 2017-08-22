@@ -4,6 +4,7 @@ import com.calculator.calculator.activity.Calculator
 import android.arch.lifecycle.ViewModel
 import android.text.SpannableStringBuilder
 import com.calculator.calculator.activity.LiveDataDelegate
+import com.calculator.calculator.activity.UiActionsLiveData
 
 /**
  * Created by mcholewa on 18/08/2017.
@@ -13,7 +14,7 @@ class BaseViewModel : ViewModel(){
     private val data = Calculator()
     val liveData = LiveDataDelegate(data)
     private var state by liveData
-    //val uiActions =  UiActionsLiveData()
+    val uiActions =  UiActionsLiveData()
     fun load(){
         data.mEquation = SpannableStringBuilder("3462346")
         data.mHistory = "3462346"

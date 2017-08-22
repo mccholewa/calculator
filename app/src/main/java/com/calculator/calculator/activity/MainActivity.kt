@@ -4,10 +4,11 @@ import android.arch.lifecycle.LifecycleActivity
 import android.os.Bundle
 import com.calculator.calculator.R
 import android.view.WindowManager
+import viewModels.BaseViewModel
 
 
 class MainActivity : LifecycleActivity() {
-    //private val viewModel = viewModel.BaseViewModel()
+    private val viewModel = BaseViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
