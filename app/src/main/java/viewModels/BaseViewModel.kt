@@ -7,6 +7,7 @@ import android.text.SpannableStringBuilder
 import com.calculator.calculator.R
 import com.calculator.calculator.activity.LiveDataDelegate
 import com.calculator.calculator.activity.UiActionsLiveData
+import fragments.BaseFragment
 import kotlinx.android.synthetic.main.fragment_base.*
 
 /**
@@ -18,9 +19,11 @@ class BaseViewModel : ViewModel() {
     val liveData = LiveDataDelegate(data)
     private var state by liveData
     val uiActions = UiActionsLiveData()
+    val selectionEnd =  uiActions.invoke {(it as BaseFragment).binding.equation.selectionEnd}
 
     fun load() {
     }
+
 
     fun onClickZero(){
         state = state.copy(mEquation = addChar('0'))
@@ -70,6 +73,9 @@ class BaseViewModel : ViewModel() {
     fun onClickDivide(){
         state = state.copy(mEquation = addChar('/'))
     }
+    fun onClickMultiply(){
+        state = state.copy(mEquation = addChar('x'))
+    }
     fun onClickDot(){
         state = state.copy(mEquation = addChar('.'))
     }
@@ -86,20 +92,22 @@ class BaseViewModel : ViewModel() {
         return newEquation
     }
 
-//    fun addChar(charToAdd:Char,equa: Editable ){
-//        var firstHalf = state.mEquation.toString().substring(0, equation.mSelectionEnd)
-//        var secondHalf =  state.mEquation.toString().substring(equation.selectionEnd)
-//        var newText = SpannableStringBuilder(firstHalf + charToAdd + secondHalf)
-//        var privCursorPosition = equation.selectionEnd
-//        state =state.copy(mEquation = newText)
-//        if(state.mEquation.isNotEmpty())
-//            equation.setSelection(privCursorPosition)
-//        else equation.setSelection(privCursorPosition-1)
-//    }
+    fun addChar(charToAdd:Char,equa: Editable ){
+        var firstHalf = state.mEquation.toString().substring(0, selectionEnd)
+        var secondHalf =  state.mEquation.toString().substring(selectionEnd)
+        var newText = SpannableStringBuilder(firstHalf + charToAdd + secondHalf)
+        var privCursorPosition = equation.selectionEnd
+        state =state.copy(mEquation = newText)
+        if(state.mEquation.isNotEmpty())
+            equation.setSelection(privCursorPosition)
+        else equation.setSelection(privCursorPosition-1)
+    }
 
 
 
-    override fun onCleared() {}
+    override fun onCleared() {
+
+    }
 
 
 
