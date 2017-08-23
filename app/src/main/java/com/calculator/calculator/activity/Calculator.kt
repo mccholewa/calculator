@@ -8,7 +8,8 @@ import android.text.SpannableStringBuilder
  */
 
 data class Calculator(
-        var mHistory: String = "",
-        var mEquation: Editable = SpannableStringBuilder(""),
-        var mSelectonMoved: Boolean= false
+        val mHistory: String = "",
+        val mEquation: Editable = SpannableStringBuilder(""),
+        val mSelectionEnd: Int = 0,
+        val mSelectonMoved: Boolean= false
 )

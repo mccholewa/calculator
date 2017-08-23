@@ -1,29 +1,30 @@
 package fragments
 
-import android.app.Fragment
+import android.arch.lifecycle.LifecycleFragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.calculator.calculator.databinding.FragmentBaseBinding
+import kotlinx.android.synthetic.main.fragment_base.*
+import viewModels.BaseViewModel
+
 /**
  * Created by mcholewa on 21/08/2017.
  */
-class BaseFragment : Fragment() {
+class BaseFragment : LifecycleFragment() {
 
-    private val viewModel = viewModels.BaseViewModel().also { it.load() }
+    private val viewModel = BaseViewModel().also { it.load() }
 
-    lateinit var binding: FragmentDashboardBinding
-
-    private val navigationController by lazy { component.navigationController() }
+    lateinit var binding: FragmentBaseBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
      override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        binding = FragmentBaseBinding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -35,11 +36,7 @@ class BaseFragment : Fragment() {
 
 
         viewModel.liveData.observe(this) {
-            adapter.replace(it.listData())
-        }
-
-        binding.contact.setOnClickListener {
-            navigationController.navigateToContacts(this.activity)
+            binding.state = it
         }
 
         viewModel.uiActions.observe(this, { it(this.activity) })
