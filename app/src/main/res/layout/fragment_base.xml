@@ -41,6 +41,11 @@
             android:id="@+id/history"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:gravity="center_vertical|right"
+            android:textSize="20sp"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@{state.mHistory}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -50,7 +55,9 @@
             android:layout_height="0dp"
             android:layout_width="0dp"
             android:gravity="center_vertical|right"
-            android:textSize="40sp"
+            android:textSize="35sp"
+            android:maxLines="1"
+            android:singleLine="true"
             android:text="@{state.mEquation}"
             app:layout_constraintBottom_toTopOf="@+id/guidelineSecond"
             app:layout_constraintRight_toRightOf="parent"
@@ -89,7 +96,7 @@
                 app:layout_rowWeight="1"
                 android:text="8"
                 android:textColor="#000000"
-                android:onClick="@{() -> viewModel.onClickEight(equation)}"/>
+                android:onClick="@{() -> viewModel.onClickEight()}"/>
 
             <Button
                 android:id="@+id/nine"
