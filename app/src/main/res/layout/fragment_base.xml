@@ -58,6 +58,7 @@
             android:textSize="35sp"
             android:maxLines="1"
             android:singleLine="true"
+            android:cursorVisible="false"
             android:text="@{state.mEquation}"
             app:layout_constraintBottom_toTopOf="@+id/guidelineSecond"
             app:layout_constraintRight_toRightOf="parent"

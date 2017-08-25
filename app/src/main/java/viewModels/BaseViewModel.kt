@@ -3,10 +3,8 @@ package viewModels
 import com.calculator.calculator.activity.Calculator
 import android.arch.lifecycle.ViewModel
 import android.text.SpannableStringBuilder
-import android.widget.EditText
 import com.calculator.calculator.activity.LiveDataDelegate
 import com.calculator.calculator.activity.UiActionsLiveData
-import fragments.BaseFragment
 
 /**
  * Created by mcholewa on 18/08/2017.
@@ -17,103 +15,167 @@ class BaseViewModel : ViewModel() {
     val liveData = LiveDataDelegate(data)
     private var state by liveData
     val uiActions = UiActionsLiveData()
-    var selectionEnd = 0
 
     fun load() {
     }
-    fun init(){
-        uiActions.invoke { selectionEnd = (it as BaseFragment).binding.equation.selectionEnd }
+
+    fun init() {
     }
-    fun setSelection(position:Int)
-    {
-        uiActions.invoke {(it as BaseFragment).binding.equation.setSelection(position) }
-    }
+//    fun setSelection(position:Int)
+//    {
+//        uiActions.invoke {(it as BaseFragment).binding.equation.setSelection(position) }
+//    }
 
     override fun onCleared() {
     }
 
-    fun onClickZero(){
+    fun onClickZero() {
         addChar('0')
     }
-    fun onClickOne(){
+
+    fun onClickOne() {
         addChar('1')
     }
-    fun onClickTwo(){
+
+    fun onClickTwo() {
         addChar('2')
     }
-    fun onClickThree(){
+
+    fun onClickThree() {
         addChar('3')
     }
-    fun onClickFour(){
+
+    fun onClickFour() {
         addChar('4')
     }
-    fun onClickFive(){
+
+    fun onClickFive() {
         addChar('5')
     }
-    fun onClickSix(){
+
+    fun onClickSix() {
         addChar('6')
     }
-    fun onClickSeven(){
+
+    fun onClickSeven() {
         addChar('7')
     }
-    fun onClickEight(){
+
+    fun onClickEight() {
         addChar('8')
     }
-    fun onClickNine(){
+
+    fun onClickNine() {
         addChar('9')
     }
-    fun onClickDel(){
+
+    fun onClickDel() {
         del()
     }
-    fun onClickC(){
-         state = state.copy(mEquation = SpannableStringBuilder(""))
+
+    fun onClickC() {
+        state = state.copy(mEquation = SpannableStringBuilder(""))
     }
-    fun onClickEqual(){
+
+    fun onClickEqual() {
         equal()
     }
-    fun onClickPlus(){
-        addOperation('+')
+
+    fun onClickMinus() {
+        if (checkAddMinus())
+            addChar('-')
+        else replaceChar('-')
     }
-    fun onClickMinus(){
-        addOperation('-')
+
+    fun onClickPlus() {
+        if (state.mEquation.isNotEmpty()) {
+            if (checkAddOperation())
+                addChar('+')
+            else replaceChar('+')
+        }
     }
+
     fun onClickDivide(){
-        addOperation('/')
+        if (state.mEquation.isNotEmpty()) {
+            if (checkAddOperation())
+                addChar('/')
+            else replaceChar('/')
+        }
     }
+
     fun onClickMultiply(){
-        addOperation('*')
+        if (state.mEquation.isNotEmpty()) {
+            if (checkAddOperation())
+                addChar('*')
+            else replaceChar('*')
+        }
     }
+
     fun onClickDot(){
-        addOperation('.')
+        if (state.mEquation.isNotEmpty()) {
+            if (checkAddOperation())
+                addChar('.')
+            else replaceChar('.')
+        }
     }
+
     fun onClickOpenBracket(){
         addChar('(')
     }
+
     fun onClickCloseBracket(){
         addChar(')')
     }
 
     fun equal(){
-        var newText =((eval(state.mEquation.toString()))).toString()
-        if(newText.substring(newText.length-2,newText.length) == ".0")
-            newText = newText.substring(0,newText.length-2)
-        state=state.copy(mHistory = state.mEquation.toString())
-        state=state.copy(mEquation = SpannableStringBuilder(newText))
+        var newText = ""
+        if(checkContainsOperation(state.mEquation[state.mEquation.length-1]))
+             newText = eval(state.mEquation.substring(state.mEquation.length-1,state.mEquation.length)).toString()
+        else
+             newText = eval(newText).toString()
+        if(newText == "null") {
+            state = state.copy(mHistory = state.mEquation.toString())
+            state = state.copy(mEquation = SpannableStringBuilder(""))
+        }
+        else {
+            if (newText.substring(newText.length - 2, newText.length) == ".0")
+                newText = newText.substring(0, newText.length - 2)
+            state = state.copy(mHistory = state.mEquation.toString())
+            state = state.copy(mEquation = SpannableStringBuilder(newText))
+        }
     }
 
     fun addChar(charToAdd:Char){
-            state = state.copy(mEquation =  state.mEquation.append(charToAdd))
+        state = state.copy(mEquation =  state.mEquation.append(charToAdd))
+    }
+    fun replaceChar(charToAdd:Char) {
+        if (checkContainsOperation(state.mEquation[state.mEquation.length-2]))
+            state = state.copy(mEquation = SpannableStringBuilder(state.mEquation.substring(0, state.mEquation.length - 2) + charToAdd))
+        else
+            state = state.copy(mEquation = SpannableStringBuilder(state.mEquation.substring(0, state.mEquation.length - 1) + charToAdd))
     }
 
-    fun addOperation(operationToAdd:Char) {
+    fun checkAddMinus():Boolean {
         if (state.mEquation.isNotEmpty()) {
-            var lastChar: Char = state.mEquation.substring(state.mEquation.length - 1, state.mEquation.length)[0]
-            if (lastChar != operationToAdd) {
-                state = state.copy(mEquation = state.mEquation.append(operationToAdd))
-            }
+            val operations = arrayListOf<Char>('-','+','.')
+            var lastChar = state.mEquation[state.mEquation.length-1]
+            if(operations.contains(lastChar))
+                return false
         }
-        if (state.mEquation.isEmpty() && operationToAdd != '-')
-            state = state.copy(mEquation = state.mEquation.append(operationToAdd))
+        return true
+    }
+
+    fun checkAddOperation():Boolean {
+        if(checkContainsOperation(state.mEquation[state.mEquation.length-1]))
+            return false
+        return true
+    }
+    fun checkContainsOperation(char:Char):Boolean
+    {
+        val operations = arrayListOf<Char>('-','+','*','/','.')
+        if(operations.contains(char))
+            return true
+        return false
     }
 
     fun del() {
@@ -121,96 +183,106 @@ class BaseViewModel : ViewModel() {
             state = state.copy(mEquation = state.mEquation.delete(state.mEquation.length-1,state.mEquation.length))
     }
 
-        fun eval(str: String): Double {
-            return object : Any() {
-                internal var pos = -1
-                internal var ch: Int = 0
+        fun eval(str: String): Double? {
+            try {
+                return object : Any() {
+                    internal var pos = -1
+                    internal var ch: Int = 0
 
-                internal fun nextChar() {
-                    ch = if (++pos < str.length) str[pos].toInt() else -1
-                }
+                    internal fun nextChar() {
+                        ch = if (++pos < str.length) str[pos].toInt() else -1
+                    }
 
-                internal fun eat(charToEat: Int): Boolean {
-                    while ( ch == ' '.toInt()) nextChar()
-                    if (ch == charToEat) {
+                    internal fun eat(charToEat: Int): Boolean {
+                        while (ch == ' '.toInt()) nextChar()
+                        if (ch == charToEat) {
+                            nextChar()
+                            return true
+                        }
+                        return false
+                    }
+
+                    internal fun parse(): Double {
                         nextChar()
-                        return true
+                        val x = parseExpression()
+                        if (pos < str.length) throw RuntimeException("Unexpected: " + ch.toChar())
+                        return x
                     }
-                    return false
-                }
 
-                internal fun parse(): Double {
-                    nextChar()
-                    val x = parseExpression()
-                    if (pos < str.length) throw RuntimeException("Unexpected: " + ch.toChar())
-                    return x
-                }
+                    // Grammar:
+                    // expression = term | expression `+` term | expression `-` term
+                    // term = factor | term `*` factor | term `/` factor
+                    // factor = `+` factor | `-` factor | `(` expression `)`
+                    //        | number | functionName factor | factor `^` factor
 
-                // Grammar:
-                // expression = term | expression `+` term | expression `-` term
-                // term = factor | term `*` factor | term `/` factor
-                // factor = `+` factor | `-` factor | `(` expression `)`
-                //        | number | functionName factor | factor `^` factor
-
-                internal fun parseExpression(): Double {
-                    var x = parseTerm()
-                    while (true) {
-                        if (eat('+'.toInt()))
-                            x += parseTerm() // addition
-                        else if (eat('-'.toInt()))
-                            x -= parseTerm() // subtraction
-                        else
-                            return x
+                    internal fun parseExpression(): Double {
+                        var x = parseTerm()
+                        while (true) {
+                            if (eat('+'.toInt()))
+                                x += parseTerm() // addition
+                            else if (eat('-'.toInt()))
+                                x -= parseTerm() // subtraction
+                            else
+                                return x
+                        }
                     }
-                }
 
-                internal fun parseTerm(): Double {
-                    var x = parseFactor()
-                    while (true) {
-                        if (eat('*'.toInt()))
-                            x *= parseFactor() // multiplication
-                        else if (eat('/'.toInt()))
-                            x /= parseFactor() // division
-                        else
-                            return x
+                    internal fun parseTerm(): Double {
+                        var x = parseFactor()
+                        while (true) {
+                            if (eat('*'.toInt()))
+                                x *= parseFactor() // multiplication
+                            else if (eat('/'.toInt()))
+                                x /= parseFactor() // division
+                            else
+                                return x
+                        }
                     }
-                }
 
-                internal fun parseFactor(): Double {
-                    if (eat('+'.toInt())) return parseFactor() // unary plus
-                    if (eat('-'.toInt())) return -parseFactor() // unary minus
-                    var x: Double
-                    val startPos = this.pos
-                    if (eat('('.toInt())) { // parentheses
-                        x = parseExpression()
-                        eat(')'.toInt())
-                    } else if (ch >= '0'.toInt() && ch <= '9'.toInt() || ch == '.'.toInt()) { // numbers
-                        while (ch >= '0'.toInt() && ch <= '9'.toInt() || ch == '.'.toInt()) nextChar()
-                        x = java.lang.Double.parseDouble(str.substring(startPos, this.pos))
-                    } else if (ch >= 'a'.toInt() && ch <= 'z'.toInt()) { // functions
-                        while (ch >= 'a'.toInt() && ch <= 'z'.toInt()) nextChar()
-                        val func = str.substring(startPos, this.pos)
-                        x = parseFactor()
-                        if (func == "sqrt")
-                            x = Math.sqrt(x)
-                        else if (func == "sin")
-                            x = Math.sin(Math.toRadians(x))
-                        else if (func == "cos")
-                            x = Math.cos(Math.toRadians(x))
-                        else if (func == "tan")
-                            x = Math.tan(Math.toRadians(x))
-                        else
-                            throw RuntimeException("Unknown function: " + func)
-                    } else {
-                        throw RuntimeException("Unexpected: " + ch.toChar())
+                    internal fun parseFactor(): Double {
+                        if (eat('+'.toInt())) return parseFactor() // unary plus
+                        if (eat('-'.toInt())) return -parseFactor() // unary minus
+                        var x: Double
+                        val startPos = this.pos
+                        if (eat('('.toInt())) { // parentheses
+                            x = parseExpression()
+                            eat(')'.toInt())
+                        } else if (ch >= '0'.toInt() && ch <= '9'.toInt() || ch == '.'.toInt()) { // numbers
+                            while (ch >= '0'.toInt() && ch <= '9'.toInt() || ch == '.'.toInt()) nextChar()
+                            x = java.lang.Double.parseDouble(str.substring(startPos, this.pos))
+                        } else if (ch >= 'a'.toInt() && ch <= 'z'.toInt()) { // functions
+                            while (ch >= 'a'.toInt() && ch <= 'z'.toInt()) nextChar()
+                            val func = str.substring(startPos, this.pos)
+                            x = parseFactor()
+                            if (func == "sqrt")
+                                x = Math.sqrt(x)
+                            else if (func == "sin")
+                                x = Math.sin(Math.toRadians(x))
+                            else if (func == "cos")
+                                x = Math.cos(Math.toRadians(x))
+                            else if (func == "tan")
+                                x = Math.tan(Math.toRadians(x))
+                            else
+                                throw RuntimeException("Unknown function: " + func)
+                        } else {
+                            throw RuntimeException("Unexpected: " + ch.toChar())
+                        }
+                        if (eat('^'.toInt())) x = Math.pow(x, parseFactor()) // exponentiation
+                        return x
                     }
-                    if (eat('^'.toInt())) x = Math.pow(x, parseFactor()) // exponentiation
-                    return x
-                }
-            }.parse()
-        }
+                }.parse()
+            }catch (e:Exception) {
+                return null
+            }
+            }
+
+
+
+
 }
 
+//                              Cursor logic
+//
 //    fun addChar(charToAdd:Char, equation: EditText){
 //        var firstHalf = equation.text.toString().substring(0, equation.selectionEnd)
 //        var secondHalf =  equation.text.toString().substring(equation.selectionEnd)
