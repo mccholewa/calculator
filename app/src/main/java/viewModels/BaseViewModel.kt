@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModel
 import android.text.SpannableStringBuilder
 import com.calculator.calculator.activity.LiveDataDelegate
 import com.calculator.calculator.activity.UiActionsLiveData
+import java.text.DecimalFormat
 
 /**
  * Created by mcholewa on 18/08/2017.
@@ -83,203 +84,196 @@ class BaseViewModel : ViewModel() {
 
     fun onClickMinus() {
         if (checkAddMinus())
+            replaceChar('-')
+        else
             addChar('-')
-        else replaceChar('-')
     }
 
     fun onClickPlus() {
         if (state.mEquation.isNotEmpty()) {
-            if (checkAddOperation())
-                addChar('+')
-            else replaceChar('+')
+            if (isOperation(state.mEquation[state.mEquation.length - 1]))
+                replaceChar('+')
+            else addChar('+')
         }
     }
 
-    fun onClickDivide(){
+    fun onClickDivide() {
         if (state.mEquation.isNotEmpty()) {
-            if (checkAddOperation())
-                addChar('/')
-            else replaceChar('/')
+            if (isOperation(state.mEquation[state.mEquation.length - 1]))
+                replaceChar('/')
+            else addChar('/')
         }
     }
 
-    fun onClickMultiply(){
+    fun onClickMultiply() {
         if (state.mEquation.isNotEmpty()) {
-            if (checkAddOperation())
-                addChar('*')
-            else replaceChar('*')
+            if (isOperation(state.mEquation[state.mEquation.length - 1]))
+                replaceChar('x')
+            else addChar('x')
         }
     }
 
-    fun onClickDot(){
+    fun onClickDot() {
         if (state.mEquation.isNotEmpty()) {
-            if (checkAddOperation())
-                addChar('.')
-            else replaceChar('.')
+            if (isOperation(state.mEquation[state.mEquation.length - 1]))
+                replaceChar('.')
+            else addChar('.')
         }
     }
 
-    fun onClickOpenBracket(){
+    fun onClickOpenBracket() {
         addChar('(')
     }
 
-    fun onClickCloseBracket(){
+    fun onClickCloseBracket() {
         addChar(')')
     }
 
-    fun equal(){
-        var newText = ""
-        if(checkContainsOperation(state.mEquation[state.mEquation.length-1]))
-             newText = eval(state.mEquation.substring(state.mEquation.length-1,state.mEquation.length)).toString()
-        else
-             newText = eval(newText).toString()
-        if(newText == "null") {
-            state = state.copy(mHistory = state.mEquation.toString())
-            state = state.copy(mEquation = SpannableStringBuilder(""))
-        }
-        else {
-            if (newText.substring(newText.length - 2, newText.length) == ".0")
-                newText = newText.substring(0, newText.length - 2)
-            state = state.copy(mHistory = state.mEquation.toString())
-            state = state.copy(mEquation = SpannableStringBuilder(newText))
-        }
+    fun equal() {
+        var newText = state.mEquation.toString()
+        val formatter = DecimalFormat("#.####")
+//        if (isOperation(newText[newText.length-1]) && isOperation(newText[state.mEquation.length-2]))
+//            newText = eval(newText.substring(0,newText.length-2)).toString()
+//        if (isOperation(newText[newText.length-1]))
+//            newText = eval(newText.substring(0,newText.length-1)).toString()
+        var result = eval(newText)
+        if (result == null) {
+            newText = ""
+        } else
+            newText = formatter.format(result).toString()
+        state = state.copy(mHistory = state.mEquation.toString())
+        state = state.copy(mEquation = SpannableStringBuilder(newText))
     }
 
-    fun addChar(charToAdd:Char){
-        state = state.copy(mEquation =  state.mEquation.append(charToAdd))
+    fun addChar(charToAdd: Char) {
+        state = state.copy(mEquation = state.mEquation.append(charToAdd))
     }
-    fun replaceChar(charToAdd:Char) {
-        if (checkContainsOperation(state.mEquation[state.mEquation.length-2]))
+
+    fun replaceChar(charToAdd: Char) {
+        if (isOperation(state.mEquation[state.mEquation.length - 2]))
             state = state.copy(mEquation = SpannableStringBuilder(state.mEquation.substring(0, state.mEquation.length - 2) + charToAdd))
         else
             state = state.copy(mEquation = SpannableStringBuilder(state.mEquation.substring(0, state.mEquation.length - 1) + charToAdd))
     }
 
-    fun checkAddMinus():Boolean {
+    fun checkAddMinus(): Boolean {
         if (state.mEquation.isNotEmpty()) {
-            val operations = arrayListOf<Char>('-','+','.')
-            var lastChar = state.mEquation[state.mEquation.length-1]
-            if(operations.contains(lastChar))
-                return false
+            val operations = arrayListOf<Char>('-', '+')
+            if (operations.contains(state.mEquation[state.mEquation.length - 1]))
+                return true
         }
-        return true
+        return false
     }
 
-    fun checkAddOperation():Boolean {
-        if(checkContainsOperation(state.mEquation[state.mEquation.length-1]))
-            return false
-        return true
-    }
-    fun checkContainsOperation(char:Char):Boolean
-    {
-        val operations = arrayListOf<Char>('-','+','*','/','.')
-        if(operations.contains(char))
+    fun isOperation(char: Char): Boolean {
+        val operations = arrayListOf<Char>('-', '+', 'x', '/')
+        if (operations.contains(char))
             return true
         return false
     }
 
     fun del() {
-        if(state.mEquation.isNotEmpty())
-            state = state.copy(mEquation = state.mEquation.delete(state.mEquation.length-1,state.mEquation.length))
+        if (state.mEquation.isNotEmpty())
+            state = state.copy(mEquation = state.mEquation.delete(state.mEquation.length - 1, state.mEquation.length))
     }
 
-        fun eval(str: String): Double? {
-            try {
-                return object : Any() {
-                    internal var pos = -1
-                    internal var ch: Int = 0
+    fun eval(str: String): Double? {
+        try {
+            return object : Any() {
+                internal var pos = -1
+                internal var ch: Int = 0
 
-                    internal fun nextChar() {
-                        ch = if (++pos < str.length) str[pos].toInt() else -1
-                    }
+                internal fun nextChar() {
+                    ch = if (++pos < str.length) str[pos].toInt() else -1
+                }
 
-                    internal fun eat(charToEat: Int): Boolean {
-                        while (ch == ' '.toInt()) nextChar()
-                        if (ch == charToEat) {
-                            nextChar()
-                            return true
-                        }
-                        return false
-                    }
-
-                    internal fun parse(): Double {
+                internal fun eat(charToEat: Int): Boolean {
+                    while (ch == ' '.toInt()) nextChar()
+                    if (ch == charToEat) {
                         nextChar()
-                        val x = parseExpression()
-                        if (pos < str.length) throw RuntimeException("Unexpected: " + ch.toChar())
-                        return x
+                        return true
                     }
+                    return false
+                }
 
-                    // Grammar:
-                    // expression = term | expression `+` term | expression `-` term
-                    // term = factor | term `*` factor | term `/` factor
-                    // factor = `+` factor | `-` factor | `(` expression `)`
-                    //        | number | functionName factor | factor `^` factor
+                internal fun parse(): Double {
+                    nextChar()
+                    val x = parseExpression()
+                    if (pos < str.length) throw RuntimeException("Unexpected: " + ch.toChar())
+                    return x
+                }
 
-                    internal fun parseExpression(): Double {
-                        var x = parseTerm()
-                        while (true) {
-                            if (eat('+'.toInt()))
-                                x += parseTerm() // addition
-                            else if (eat('-'.toInt()))
-                                x -= parseTerm() // subtraction
-                            else
-                                return x
-                        }
+                // Grammar:
+                // expression = term | expression `+` term | expression `-` term
+                // term = factor | term `*` factor | term `/` factor
+                // factor = `+` factor | `-` factor | `(` expression `)`
+                //        | number | functionName factor | factor `^` factor
+
+                internal fun parseExpression(): Double {
+                    var x = parseTerm()
+                    while (true) {
+                        if (eat('+'.toInt()))
+                            x += parseTerm() // addition
+                        else if (eat('-'.toInt()))
+                            x -= parseTerm() // subtraction
+                        else
+                            return x
                     }
+                }
 
-                    internal fun parseTerm(): Double {
-                        var x = parseFactor()
-                        while (true) {
-                            if (eat('*'.toInt()))
-                                x *= parseFactor() // multiplication
-                            else if (eat('/'.toInt()))
-                                x /= parseFactor() // division
-                            else
-                                return x
-                        }
+                internal fun parseTerm(): Double {
+                    var x = parseFactor()
+                    while (true) {
+                        if (eat('x'.toInt()))
+                            x *= parseFactor() // multiplication
+                        else if (eat('/'.toInt()))
+                            x /= parseFactor() // division
+                        else
+                            return x
                     }
+                }
 
-                    internal fun parseFactor(): Double {
-                        if (eat('+'.toInt())) return parseFactor() // unary plus
-                        if (eat('-'.toInt())) return -parseFactor() // unary minus
-                        var x: Double
-                        val startPos = this.pos
-                        if (eat('('.toInt())) { // parentheses
-                            x = parseExpression()
-                            eat(')'.toInt())
-                        } else if (ch >= '0'.toInt() && ch <= '9'.toInt() || ch == '.'.toInt()) { // numbers
-                            while (ch >= '0'.toInt() && ch <= '9'.toInt() || ch == '.'.toInt()) nextChar()
-                            x = java.lang.Double.parseDouble(str.substring(startPos, this.pos))
-                        } else if (ch >= 'a'.toInt() && ch <= 'z'.toInt()) { // functions
-                            while (ch >= 'a'.toInt() && ch <= 'z'.toInt()) nextChar()
-                            val func = str.substring(startPos, this.pos)
-                            x = parseFactor()
-                            if (func == "sqrt")
-                                x = Math.sqrt(x)
-                            else if (func == "sin")
-                                x = Math.sin(Math.toRadians(x))
-                            else if (func == "cos")
-                                x = Math.cos(Math.toRadians(x))
-                            else if (func == "tan")
-                                x = Math.tan(Math.toRadians(x))
-                            else
-                                throw RuntimeException("Unknown function: " + func)
-                        } else {
-                            throw RuntimeException("Unexpected: " + ch.toChar())
-                        }
-                        if (eat('^'.toInt())) x = Math.pow(x, parseFactor()) // exponentiation
-                        return x
+                internal fun parseFactor(): Double {
+                    if (eat('+'.toInt())) return parseFactor() // unary plus
+                    if (eat('-'.toInt())) return -parseFactor() // unary minus
+                    var x: Double
+                    val startPos = this.pos
+                    if (eat('('.toInt())) { // parentheses
+                        x = parseExpression()
+                        eat(')'.toInt())
+                    } else if (ch >= '0'.toInt() && ch <= '9'.toInt() || ch === '.'.toInt()) { // numbers
+                        while (ch >= '0'.toInt() && ch <= '9'.toInt() || ch === '.'.toInt()) nextChar()
+                        x = java.lang.Double.parseDouble(str.substring(startPos, this.pos))
+                    } else if (ch >= 'a'.toInt() && ch <= 'z'.toInt()) {
+                        while (ch >= 'a'.toInt() && ch <= 'z'.toInt()) nextChar()
+                        val func = str.substring(startPos, this.pos)
+                        x = parseFactor()
+                        if (func == "sqrt")
+                            x = Math.sqrt(x)
+                        else if (func == "sin")
+                            x = Math.sin(Math.toRadians(x))
+                        else if (func == "cos")
+                            x = Math.cos(Math.toRadians(x))
+                        else if (func == "tan")
+                            x = Math.tan(Math.toRadians(x))
+                        else
+                            throw RuntimeException("Unknown function: " + func)
+                    } else {
+                        throw RuntimeException("Unexpected: " + ch.toChar())
                     }
-                }.parse()
-            }catch (e:Exception) {
-                return null
-            }
-            }
+                    if (eat('^'.toInt())) x = Math.pow(x, parseFactor()) // exponentiation
+                    return x
+                }
 
+            }.parse()
+        } catch (e: Exception) {
+            return null
+        }
 
-
-
+    }
 }
+
+
 
 //                              Cursor logic
 //
