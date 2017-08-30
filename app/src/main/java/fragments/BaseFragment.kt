@@ -2,6 +2,7 @@ package fragments
 
 import android.arch.lifecycle.LifecycleFragment
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +37,7 @@ class BaseFragment : LifecycleFragment() {
 
 
         viewModel.liveData.observe(this) {
+            Log.d("TAG", "live data on next")
             binding.state = it
         }
 

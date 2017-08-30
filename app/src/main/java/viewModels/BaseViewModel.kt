@@ -1,8 +1,10 @@
 package viewModels
 
-import com.calculator.calculator.activity.Calculator
 import android.arch.lifecycle.ViewModel
 import android.text.SpannableStringBuilder
+import android.util.Log
+import android.widget.EditText
+import com.calculator.calculator.activity.Calculator
 import com.calculator.calculator.activity.LiveDataDelegate
 import com.calculator.calculator.activity.UiActionsLiveData
 import java.text.DecimalFormat
@@ -20,12 +22,6 @@ class BaseViewModel : ViewModel() {
     fun load() {
     }
 
-    fun init() {
-    }
-//    fun setSelection(position:Int)
-//    {
-//        uiActions.invoke {(it as BaseFragment).binding.equation.setSelection(position) }
-//    }
 
     override fun onCleared() {
     }
@@ -75,7 +71,7 @@ class BaseViewModel : ViewModel() {
     }
 
     fun onClickC() {
-        state = state.copy(mEquation = SpannableStringBuilder(""))
+        state = state.copy(mEquation = "")
     }
 
     fun onClickEqual() {
@@ -83,15 +79,15 @@ class BaseViewModel : ViewModel() {
     }
 
     fun onClickMinus() {
-        if (checkAddMinus())
+        if (checkAddMinus()) {
             replaceChar('-')
-        else
+        } else
             addChar('-')
     }
 
     fun onClickPlus() {
         if (state.mEquation.isNotEmpty()) {
-            if (isOperation(state.mEquation[state.mEquation.length - 1]))
+            if (isLastCharOperation())
                 replaceChar('+')
             else addChar('+')
         }
@@ -99,7 +95,7 @@ class BaseViewModel : ViewModel() {
 
     fun onClickDivide() {
         if (state.mEquation.isNotEmpty()) {
-            if (isOperation(state.mEquation[state.mEquation.length - 1]))
+            if (isLastCharOperation())
                 replaceChar('/')
             else addChar('/')
         }
@@ -107,7 +103,7 @@ class BaseViewModel : ViewModel() {
 
     fun onClickMultiply() {
         if (state.mEquation.isNotEmpty()) {
-            if (isOperation(state.mEquation[state.mEquation.length - 1]))
+            if (isLastCharOperation())
                 replaceChar('x')
             else addChar('x')
         }
@@ -115,7 +111,7 @@ class BaseViewModel : ViewModel() {
 
     fun onClickDot() {
         if (state.mEquation.isNotEmpty()) {
-            if (isOperation(state.mEquation[state.mEquation.length - 1]))
+            if (isLastCharOperation())
                 replaceChar('.')
             else addChar('.')
         }
@@ -130,38 +126,46 @@ class BaseViewModel : ViewModel() {
     }
 
     fun equal() {
-        var newText = state.mEquation.toString()
+        var newText = state.mEquation
         val formatter = DecimalFormat("#.####")
-//        if (isOperation(newText[newText.length-1]) && isOperation(newText[state.mEquation.length-2]))
-//            newText = eval(newText.substring(0,newText.length-2)).toString()
-//        if (isOperation(newText[newText.length-1]))
-//            newText = eval(newText.substring(0,newText.length-1)).toString()
+        if (isOperation(newText[newText.length-1]) && isOperation(newText[state.mEquation.length-2]))
+            newText = eval(newText.substring(0,newText.length-2)).toString()
+        if (isOperation(newText[newText.length-1]))
+            newText = eval(newText.substring(0,newText.length-1)).toString()
         var result = eval(newText)
         if (result == null) {
             newText = ""
         } else
             newText = formatter.format(result).toString()
-        state = state.copy(mHistory = state.mEquation.toString())
-        state = state.copy(mEquation = SpannableStringBuilder(newText))
+
+
+
+        state = state.copy(mHistory = state.mEquation)
+        state = state.copy(mEquation = newText)
     }
 
+
     fun addChar(charToAdd: Char) {
-        state = state.copy(mEquation = state.mEquation.append(charToAdd))
+
+
+        state = state.copy(mEquation = state.mEquation +charToAdd)
     }
 
     fun replaceChar(charToAdd: Char) {
-        if (isOperation(state.mEquation[state.mEquation.length - 2]))
-            state = state.copy(mEquation = SpannableStringBuilder(state.mEquation.substring(0, state.mEquation.length - 2) + charToAdd))
-        else
-            state = state.copy(mEquation = SpannableStringBuilder(state.mEquation.substring(0, state.mEquation.length - 1) + charToAdd))
+        if (state.mEquation.isNotEmpty()) {
+            if (state.mEquation.length >= 2)
+                if (isOperation(state.mEquation[state.mEquation.length - 2]))
+                    state = state.copy(mEquation = state.mEquation.substring(0, state.mEquation.length - 2) + charToAdd)
+                else
+                    state = state.copy(mEquation = state.mEquation.substring(0, state.mEquation.length - 1) + charToAdd)
+        }
     }
 
     fun checkAddMinus(): Boolean {
-        if (state.mEquation.isNotEmpty()) {
-            val operations = arrayListOf<Char>('-', '+')
+        val operations = arrayListOf<Char>('-', '+')
+        if (state.mEquation.isNotEmpty())
             if (operations.contains(state.mEquation[state.mEquation.length - 1]))
                 return true
-        }
         return false
     }
 
@@ -172,9 +176,16 @@ class BaseViewModel : ViewModel() {
         return false
     }
 
+    fun isLastCharOperation(): Boolean {
+        if (state.mEquation.isNotEmpty())
+            if (isOperation(state.mEquation[state.mEquation.length - 1]))
+                return true
+        return false
+    }
+
     fun del() {
         if (state.mEquation.isNotEmpty())
-            state = state.copy(mEquation = state.mEquation.delete(state.mEquation.length - 1, state.mEquation.length))
+            state = state.copy(mEquation = state.mEquation.removeRange(state.mEquation.length - 1, state.mEquation.length))
     }
 
     fun eval(str: String): Double? {
@@ -202,12 +213,6 @@ class BaseViewModel : ViewModel() {
                     if (pos < str.length) throw RuntimeException("Unexpected: " + ch.toChar())
                     return x
                 }
-
-                // Grammar:
-                // expression = term | expression `+` term | expression `-` term
-                // term = factor | term `*` factor | term `/` factor
-                // factor = `+` factor | `-` factor | `(` expression `)`
-                //        | number | functionName factor | factor `^` factor
 
                 internal fun parseExpression(): Double {
                     var x = parseTerm()
@@ -264,31 +269,15 @@ class BaseViewModel : ViewModel() {
                     if (eat('^'.toInt())) x = Math.pow(x, parseFactor()) // exponentiation
                     return x
                 }
-
             }.parse()
         } catch (e: Exception) {
             return null
         }
-
     }
 }
 
 
-
 //                              Cursor logic
-//
-//    fun addChar(charToAdd:Char, equation: EditText){
-//        var firstHalf = equation.text.toString().substring(0, equation.selectionEnd)
-//        var secondHalf =  equation.text.toString().substring(equation.selectionEnd)
-//        var newText = SpannableStringBuilder(firstHalf + charToAdd + secondHalf)
-//        var privCursorPosition = equation.selectionEnd
-//        equation.text = SpannableStringBuilder(newText)
-//        if(equation.text.isNotEmpty()) {
-//            equation.setSelection(privCursorPosition+1)
-//        }
-//        else
-//            equation.setSelection(privCursorPosition)
-//    }
 
 //    fun del() {
 //        if(equation.text.isNotEmpty() && equation.selectionEnd!=0) {

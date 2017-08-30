@@ -56,18 +56,18 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@android:color/transparent"
-            android:cursorVisible="false"
+            android:cursorVisible="true"
             android:gravity="center_vertical|right"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="@{state.mEquation}"
-            android:textSelectHandleLeft="?android:attr/textSelectHandleLeft"
+            android:text="@={state.mEquation}"
             android:textSize="35sp"
             app:layout_constraintBottom_toTopOf="@+id/guidelineSecond"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guidelineFirst"
-        />
+            android:inputType="text"
+            app:cursorPosition="@{state.mEquation}"/>
 
         <android.support.v7.widget.GridLayout
             android:layout_width="0dp"
