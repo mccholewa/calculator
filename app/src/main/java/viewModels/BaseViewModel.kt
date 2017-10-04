@@ -1,9 +1,6 @@
 package viewModels
 
 import android.arch.lifecycle.ViewModel
-import android.text.SpannableStringBuilder
-import android.util.Log
-import android.widget.EditText
 import com.calculator.calculator.activity.Calculator
 import com.calculator.calculator.activity.LiveDataDelegate
 import com.calculator.calculator.activity.UiActionsLiveData
@@ -19,9 +16,9 @@ class BaseViewModel : ViewModel() {
     private var state by liveData
     val uiActions = UiActionsLiveData()
 
+
     fun load() {
     }
-
 
     override fun onCleared() {
     }
@@ -125,7 +122,11 @@ class BaseViewModel : ViewModel() {
         addChar(')')
     }
 
-    fun equal() {
+    /**
+     * executes equation, formats it, tris it if last char is operation,
+     * displays empty  "" if didn't work
+     */
+    private fun equal() {
         var newText = state.mEquation
         val formatter = DecimalFormat("#.####")
         if (isOperation(newText[newText.length-1]) && isOperation(newText[state.mEquation.length-2]))
@@ -137,20 +138,19 @@ class BaseViewModel : ViewModel() {
             newText = ""
         } else
             newText = formatter.format(result).toString()
-
-
-
         state = state.copy(mHistory = state.mEquation)
         state = state.copy(mEquation = newText)
     }
 
-
-    fun addChar(charToAdd: Char) {
-
-
+    /**
+     * adds char to mEquation
+     * */
+    private fun addChar(charToAdd: Char) {
         state = state.copy(mEquation = state.mEquation +charToAdd)
     }
-
+    /**
+     * replaces last two or last char if they are '-' or '+' or 'x' or '/'
+     * */
     fun replaceChar(charToAdd: Char) {
         if (state.mEquation.isNotEmpty()) {
             if (state.mEquation.length >= 2)
@@ -160,35 +160,50 @@ class BaseViewModel : ViewModel() {
                     state = state.copy(mEquation = state.mEquation.substring(0, state.mEquation.length - 1) + charToAdd)
         }
     }
-
-    fun checkAddMinus(): Boolean {
+    /**
+     * @return true : if mEquation.isNotEmpty and last char is '-' or '+'
+     * */
+    private fun checkAddMinus(): Boolean {
         val operations = arrayListOf<Char>('-', '+')
         if (state.mEquation.isNotEmpty())
             if (operations.contains(state.mEquation[state.mEquation.length - 1]))
                 return true
         return false
     }
-
-    fun isOperation(char: Char): Boolean {
+    /**
+     * @param char
+     * @returns true : char is '-' or '+' or 'x' or '/'
+     * */
+    private fun isOperation(char: Char): Boolean {
         val operations = arrayListOf<Char>('-', '+', 'x', '/')
         if (operations.contains(char))
             return true
         return false
     }
 
-    fun isLastCharOperation(): Boolean {
+    /**
+     * @return true : last char in mEquation is '-' or '+' or 'x' or '/'
+     * */
+    private fun isLastCharOperation(): Boolean {
         if (state.mEquation.isNotEmpty())
             if (isOperation(state.mEquation[state.mEquation.length - 1]))
                 return true
         return false
     }
-
-    fun del() {
+    /**
+     * Deletes last character in mEquation
+     * */
+    private fun del() {
         if (state.mEquation.isNotEmpty())
             state = state.copy(mEquation = state.mEquation.removeRange(state.mEquation.length - 1, state.mEquation.length))
     }
-
-    fun eval(str: String): Double? {
+    /**
+     * Main calculating method
+     * @param str : equation
+     * @return Double : result value
+     * @return null : broke
+     * */
+     fun eval(str: String): Double? {
         try {
             return object : Any() {
                 internal var pos = -1
@@ -275,15 +290,3 @@ class BaseViewModel : ViewModel() {
         }
     }
 }
-
-
-//                              Cursor logic
-
-//    fun del() {
-//        if(equation.text.isNotEmpty() && equation.selectionEnd!=0) {
-//            var newText = equation.text.removeRange(equation.selectionEnd-1, equation.selectionEnd).toString()
-//            var privCursorPosition = equation.selectionEnd
-//            equation.text = SpannableStringBuilder(newText)
-//            equation.setSelection(privCursorPosition-1)
-//        }
-//    }

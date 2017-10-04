@@ -7,6 +7,8 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import viewModels.BaseViewModel;
+
 import static org.junit.Assert.*;
 
 /**
@@ -20,7 +22,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() throws Exception {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
-
         assertEquals("com.calculator.calculator", appContext.getPackageName());
     }
 }

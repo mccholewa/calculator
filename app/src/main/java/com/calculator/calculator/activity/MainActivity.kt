@@ -6,13 +6,13 @@ import com.calculator.calculator.R
 import android.view.WindowManager
 import fragments.BaseFragment
 import kotlinx.android.synthetic.main.fragment_base.*
-import viewModels.BaseViewModel
+
 
 class MainActivity : LifecycleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
+        window.setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
                 WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
         val baseFragment = BaseFragment()
         supportFragmentManager.beginTransaction()
@@ -23,7 +23,7 @@ class MainActivity : LifecycleActivity() {
 
     override fun onStart() {
         super.onStart()
-        equation.setCustomSelectionActionModeCallback(SelectionEditText())
+        equation.customSelectionActionModeCallback = SelectionEditText()
     }
 }
 
